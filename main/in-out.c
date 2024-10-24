@@ -46,18 +46,23 @@ MÉTODO PRINCIPAL
 
 void leituraArquivo(int argc, char** argv){
 
-    int opt;
+    int opt = getopt(argc, argv, "a:b:");
 
-    do{
-
-        opt = getopt(argc, argv, "a:b:");
+    while(opt != -1){
 
         switch(opt){
             case 'a':
                 setComposicao(optarg);
+                break;
+
+            case 'b':
+                printf("%s\n", optarg);
+                break;
         }
 
-    }while(opt != -1);
+        opt = getopt(argc, argv, "a:b:");
+
+    }
 
 }
 
@@ -70,14 +75,17 @@ int** setComposicao(char* optarg){
     FILE* file = abrirArquivo(optarg);
     int** matriz = alocaMatriz(12, 3);
 
-    char* buffer = malloc(5*sizeof(char));
+    char* buffer = malloc(sizeof(char));
 
-    int i = 0;
+    for(int i = 0; i < 12; i++){
 
-    do{
-
-        fgets(buffer, 5, file);
-
+        if(fgets(buffer, sizeof(buffer), file) == NULL)
+            break;
+        
+        for(int j = 0; j < 7; j++){
+            printf("%c", buffer[j]);
+        }
+        
         matriz[i][0] = buffer[0] - '0';
         matriz[i][1] = buffer[2] - '0';
 
@@ -113,9 +121,7 @@ int** setComposicao(char* optarg){
 
         }
 
-        i++;
-
-    }while(buffer != NULL);
+    }
 
     free(buffer);
 
@@ -126,7 +132,7 @@ int** setComposicao(char* optarg){
 
 void main(int argc, char** argv){
 
-    leituraArquivo(argc, argv);
+    setComposicao("/home/vitorvsgp/vitorvsgp/Área de Trabalho/tp1-paa/main/Composicao.txt");
 
     return;
 
