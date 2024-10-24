@@ -77,49 +77,22 @@ int** setComposicao(char* optarg){
 
     char* buffer = malloc(sizeof(char));
 
-    for(int i = 0; i < 12; i++){
+    int cor;
 
-        if(fgets(buffer, sizeof(buffer), file) == NULL)
-            break;
+    while(fgets(buffer, sizeof(buffer), file)){
         
         for(int j = 0; j < 7; j++){
             printf("%c", buffer[j]);
         }
+
+        printf("%d\n", buffer[3]+buffer[4]);
         
-        matriz[i][0] = buffer[0] - '0';
-        matriz[i][1] = buffer[2] - '0';
+        cor = (int)buffer[3] + (int)buffer[4];
+        //Am(174), Az(187), Vd(186), Vm(195)
 
-        switch(buffer[3]){
-
-            case 'A':
-
-                switch(buffer[4]){
-
-                    case 'z':
-                        matriz[i][3] = 1;
-                        break;
-
-                    case 'm':
-                        matriz[i][3] = 2;
-                        break;
-                
-                }
-
-            case 'V':
-
-                switch(buffer[4]){
-
-                    case 'm':
-                        matriz[i][3] = 3;
-                        break;
-
-                    case 'd':
-                        matriz[i][3] = 4;
-                        break;
-
-                }
-
-        }
+        matriz[][0] = (int)buffer[0];
+        matriz[][1] = (int)buffer[2];
+        matriz[][2] = cor;
 
     }
 
