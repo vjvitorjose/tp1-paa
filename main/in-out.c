@@ -17,50 +17,26 @@ void fecharArquivo(FILE* file){
 }
 
 /*--------------------------------------------------------------------------------
-MÉTODOS PARA TRATAMENTO DE MATRIZES
---------------------------------------------------------------------------------*/
-
-int** alocaMatriz(int linhas, int colunas){
-
-    int** matriz = malloc(linhas*sizeof(int*));
-    for(int i = 0; i < linhas; i++){
-        matriz[i] = (int*)malloc(colunas*sizeof(int));
-    }
-
-    return matriz;
-
-}
-
-void desalocaMatriz(int** matriz, int linhas){
-
-    for(int i = 0; i < linhas; i++){
-        free(matriz[i]);
-    }
-    free(matriz);
-
-}
-
-/*--------------------------------------------------------------------------------
 MÉTODO PRINCIPAL
 --------------------------------------------------------------------------------*/
 
-void leituraArquivo(int argc, char** argv){
+void leituraArquivo(int argc, char** argv, int** composicao, int*** configuracoes){
 
-    int opt = getopt(argc, argv, "a:b:");
+    int opt;
 
-    while(opt != -1){
+    while((opt = getopt(argc, argv, "a:b:")) != -1){
 
         switch(opt){
+
             case 'a':
-                setComposicao(optarg);
+                printf("entrou no case a");
+                leituraComposicao(optarg, composicao);
                 break;
 
             case 'b':
-                printf("%s\n", optarg);
+                // setConfiguracoes(optarg, configuracoes);
                 break;
         }
-
-        opt = getopt(argc, argv, "a:b:");
 
     }
 
@@ -70,42 +46,61 @@ void leituraArquivo(int argc, char** argv){
 MÉTODOS PARA TRATAMENTO DA COMPOSIÇÃO
 --------------------------------------------------------------------------------*/
 
-int** setComposicao(char* optarg){
+int** leituraComposicao(char* optarg, int** matriz){
 
     FILE* file = abrirArquivo(optarg);
-    int** matriz = alocaMatriz(12, 3);
 
-    char* buffer = malloc(sizeof(char));
+    char* buffer = malloc(8*sizeof(char));
 
-    int cor;
+    int cor, index, qtd, tam;
 
     while(fgets(buffer, sizeof(buffer), file)){
-        
-        for(int j = 0; j < 7; j++){
-            printf("%c", buffer[j]);
-        }
-
-        printf("%d\n", buffer[3]+buffer[4]);
         
         cor = (int)buffer[3] + (int)buffer[4];
         //Am(174), Az(187), Vd(186), Vm(195)
 
-        matriz[][0] = (int)buffer[0];
-        matriz[][1] = (int)buffer[2];
-        matriz[][2] = cor;
+        switch(cor){
+            case 174:
+                cor = 0;
+                break;
+            case 187:
+                cor = 3;
+                break;
+            case 186:
+                cor = 6;
+                break;
+            case 195:
+                cor = 9;
+                break;
+        }
+
+        qtd = buffer[0] - '0';
+        tam = buffer[2] - '0';
+        index = cor + (tam % 3);
+
+        matriz[index][0] = qtd;
+        matriz[index][1] = tam;
+        matriz[index][2] = cor;
 
     }
 
     free(buffer);
-
-    desalocaMatriz(matriz, 12);
     fecharArquivo(file);
 
 }
 
+//_____________________________________________________________________________
+
 void main(int argc, char** argv){
 
-    setComposicao("/home/vitorvsgp/vitorvsgp/Área de Trabalho/tp1-paa/main/Composicao.txt");
+    int** composicao = alocaMatriz(12, 3);
+    int*** configuracao = NULL;
+
+    leituraArquivo(argc, argv, composicao, configuracao);
+
+    imprimeMatriz(composicao, 12, 3);
+
+    desalocaMatriz(composicao, 12);
 
     return;
 

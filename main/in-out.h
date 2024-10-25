@@ -5,6 +5,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "kit-config.h"
+
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA TRATAMENTO DE ARQUIVOS
 --------------------------------------------------------------------------------*/
@@ -13,22 +15,15 @@ FILE* abrirArquivo(char* caminho);
 void fecharArquivo(FILE* file);
 
 /*--------------------------------------------------------------------------------
-MÉTODOS PARA TRATAMENTO DE MATRIZES
---------------------------------------------------------------------------------*/
-
-int** alocaMatriz(int linhas, int colunas);
-void desalocaMatriz(int** matriz, int linhas);
-
-/*--------------------------------------------------------------------------------
 MÉTODO PRINCIPAL
 --------------------------------------------------------------------------------*/
 
-void leituraArquivo(int argc, char** argv);
+void leituraArquivo(int argc, char** argv, int** comp, int*** config);
 
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA TRATAMENTO DA COMPOSIÇÃO
 --------------------------------------------------------------------------------*/
 
-int** setComposicao(char* optarg);
+int** leituraComposicao(char* optarg, int** matriz);
 
 #endif
