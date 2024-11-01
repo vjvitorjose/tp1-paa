@@ -6,8 +6,11 @@ MÉTODOS PARA TRATAMENTO DE ARQUIVOS
 
 FILE* abrirArquivo(char* caminho){
 
-    FILE* file = malloc(sizeof(FILE));
-    file = fopen(caminho, "r");
+    FILE* file = fopen(caminho, "r");
+
+    if(file == NULL)
+        printf("ERRO: erro ao abrir o arquivo.\n");
+
     return file;
 
 }
@@ -20,25 +23,10 @@ void fecharArquivo(FILE* file){
 MÉTODO PRINCIPAL
 --------------------------------------------------------------------------------*/
 
-void leituraArquivo(int argc, char** argv, int** composicao, int*** configuracoes){
+int getOpt(int argc, char** argv){
 
-    int opt;
-
-    while((opt = getopt(argc, argv, "a:b:")) != -1){
-
-        switch(opt){
-
-            case 'a':
-                printf("entrou no case a");
-                leituraComposicao(optarg, composicao);
-                break;
-
-            case 'b':
-                // setConfiguracoes(optarg, configuracoes);
-                break;
-        }
-
-    }
+    int opt = getopt(argc, argv, "a:b:");
+    return opt; 
 
 }
 
@@ -90,18 +78,3 @@ int** leituraComposicao(char* optarg, int** matriz){
 }
 
 //_____________________________________________________________________________
-
-void main(int argc, char** argv){
-
-    int** composicao = alocaMatriz(12, 3);
-    int*** configuracao = NULL;
-
-    leituraArquivo(argc, argv, composicao, configuracao);
-
-    imprimeMatriz(composicao, 12, 3);
-
-    desalocaMatriz(composicao, 12);
-
-    return;
-
-}

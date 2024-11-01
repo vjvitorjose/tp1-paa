@@ -18,7 +18,8 @@ void fecharArquivo(FILE* file);
 MÉTODO PRINCIPAL
 --------------------------------------------------------------------------------*/
 
-void leituraArquivo(int argc, char** argv, int** comp, int*** config);
+void leituraArquivo(int argc, char** argv, int** comp);
+int getOpt(int argc, char** argv);
 
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA TRATAMENTO DA COMPOSIÇÃO
