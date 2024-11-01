@@ -4,42 +4,48 @@
 MÉTODOS PARA TRATAMENTO DE MATRIZES
 --------------------------------------------------------------------------------*/
 
-int** alocaMatriz(int linhas, int colunas){
+Matriz* alocaMatriz(int linhas, int colunas){
 
-    int** matriz = malloc(linhas*sizeof(int*));
+    Matriz* matriz = malloc(sizeof(Matriz));
+
+    matriz->li = linhas;
+    matriz->co = colunas;
+
+    matriz->dados = malloc(linhas*sizeof(int*));
     for(int i = 0; i < linhas; i++){
-        matriz[i] = (int*)malloc(colunas*sizeof(int));
+        matriz->dados[i] = (int*)malloc(colunas*sizeof(int));
     }
 
-    inicializaMatriz(matriz, linhas, colunas);
+    inicializaMatriz(matriz);
     return matriz;
 
 }
 
-void inicializaMatriz(int** matriz, int linhas, int colunas){
+void inicializaMatriz(Matriz* matriz){
 
-    for(int i = 0; i < linhas; i++){
-        for(int j = 0; j < colunas; j++){
-            matriz[i][j] = 0;
+    for(int i = 0; i < matriz->li; i++){
+        for(int j = 0; j < matriz->co; j++){
+            matriz->dados[i][j] = 0;
         }
     }
 
 }
 
-void desalocaMatriz(int** matriz, int linhas){
+void desalocaMatriz(Matriz* matriz){
 
-    for(int i = 0; i < linhas; i++){
-        free(matriz[i]);
+    for(int i = 0; i < matriz->li; i++){
+        free(matriz->dados[i]);
     }
+    free(matriz->dados);
     free(matriz);
 
 }
 
-void imprimeMatriz(int** matriz, int linhas, int colunas){
+void imprimeMatriz(Matriz* matriz){
 
-    for(int i = 0; i < linhas; i++){
-        for(int j = 0; j < colunas; j++){
-            printf("%d\t", matriz[i][j]);
+    for(int i = 0; i < matriz->li; i++){
+        for(int j = 0; j < matriz->co; j++){
+            printf("%d\t", matriz->dados[i][j]);
         }
         printf("\n");
     }
@@ -50,18 +56,112 @@ void imprimeMatriz(int** matriz, int linhas, int colunas){
 MÉTODOS PARA VERIFICAÇÂO DA COMPOSIÇÃO
 --------------------------------------------------------------------------------*/
 
-int checkComposicao(int** matriz){
+int verificaComposicao(Matriz* composicao){
 
-    int contador = 0;
+    int somatorio = 0;
     int flags[4] = {0, 0, 0, 0};
+    //flags = {Am, Az, Vd, Vm}
 
-    for(int i = 0; i < 12; i++){
-        for(int j = 0; j < 3; j++){
-            contador += matriz[i][0];
-        }
+    int index;
+
+    for(int i = 0; i < composicao->li; i++){
+
+        somatorio += composicao->dados[i][0];
+
+        index = composicao->dados[i][2];
+
+        if(!flags[index])
+            flags[index] = 1;
+
+    }    
+
+    if(somatorio > 36)
+        return -1;
+
+    for(int i = 0; i < 3; i++){
+        if(!flags[i])
+            return 0;
     }
 
-    if(contador > 36)
-        return 0;
+    return 1;
+
+}
+
+/*--------------------------------------------------------------------------------
+MÉTODOS PARA VERIFICAÇÂO DA CONFIGURAÇÃO
+--------------------------------------------------------------------------------*/
+
+Matriz* mapeiaConfiguracao(Matriz* config){
+
+    Matriz* mapa = alocaMatriz(6, 6);
+
+    int orientacao;
+    //0(horizontal), 1(vertical)
+
+    for(int i = 0; i < config->li; i++){
+
+        if(config->dados[i][0] != config->dados[i][2])
+            orientacao = 0;
+
+        else
+            orientacao = 1;
+
+        if(orientacao == 0){
+
+            for(int j = config->dados[i][0]-1; j < config->dados[i][2]-1; j++){
+                mapa->dados[config->dados[i][1]][]
+            }
+
+        }
+
+    }
+
+}
+
+int verificaConfiguracao(Matriz* config){
+
+    int orientacao;
+    //0(horizontal), 1(vertical)
+
+    for(int i = 0; i < config->li; i++){
+
+        if(config->dados[i][0] != config->dados[i][2])
+            orientacao = 0;
+
+        else
+            orientacao = 1;
+
+        if(orientacao == 0){
+
+            if(config->dados[i][0] != 1){
+
+                config->
+
+            }
+
+        }
+
+    }
+
+}
+
+int emparelhadoCompConfig(Matriz* comp, Matriz* config){
+
+    int index;
+    Matriz copiaComp = *comp;
+
+    for(int i = 0; i < config->li; i++){
+
+        index = (config->dados[i][5] * 3) + (config->dados[i][4] % 3);
+        copiaComp.dados[index][0]--;
+
+    }
+
+    for(int i = 0; i < copiaComp.li; i++){
+        if(copiaComp.dados[i][0] != 0)
+            return 0;
+    }
+
+    return 1;
 
 }

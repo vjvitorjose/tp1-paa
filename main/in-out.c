@@ -52,19 +52,19 @@ int** leituraComposicao(char* optarg, int** matriz){
                 cor = 0;
                 break;
             case 187:
-                cor = 3;
+                cor = 1;
                 break;
             case 186:
-                cor = 6;
+                cor = 2;
                 break;
             case 195:
-                cor = 9;
+                cor = 3;
                 break;
         }
 
         qtd = buffer[0] - '0';
         tam = buffer[2] - '0';
-        index = cor + (tam % 3);
+        index = (cor * 3) + (tam % 3);
 
         matriz[index][0] = qtd;
         matriz[index][1] = tam;

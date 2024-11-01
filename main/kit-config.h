@@ -5,13 +5,20 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+typedef struct Matriz{
+
+    int** dados;
+    int li, co;
+
+}Matriz;
+
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA TRATAMENTO DE MATRIZES
 --------------------------------------------------------------------------------*/
 
-int** alocaMatriz(int linhas, int colunas);
-void inicializaMatriz(int** matriz, int linhas, int colunas);
-void desalocaMatriz(int** matriz, int linhas);
-void imprimeMatriz(int** matriz, int linhas, int colunas);
+Matriz* alocaMatriz(int linhas, int colunas);
+void inicializaMatriz(Matriz* matriz);
+void desalocaMatriz(Matriz* matriz);
+void imprimeMatriz(Matriz* matriz);
 
 #endif

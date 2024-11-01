@@ -6,10 +6,16 @@
 
 int main(int argc, char *argv[]){
 
-    int opt = getOpt(argc, argv);
+    Matriz* matriz = alocaMatriz(12, 3);
 
-    printf("%d\n", opt);
-    printf("%s", optarg);
+    for(int i = 0; i < matriz->li; i++){
+        for(int j = 0; j < matriz->co; j++){
+            matriz->dados[i][j] = j;
+        }
+    }
+
+    imprimeMatriz(matriz);
+    desalocaMatriz(matriz);
 
     return 0;
 
