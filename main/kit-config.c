@@ -173,6 +173,42 @@ int verificaConfiguracao(Matriz* config){
 
             }
 
+
+            //a bomba esta encostada no chão
+            if(config->dados[i][1] == 6){
+
+                //a bomba esta encostada no chão e na parede esquerda
+                if(config->dados[i][0] == 1){
+
+                    //o vizinho a direita da bomba no mapa tem o mesmo código de cor
+                    if(mapa->dados[config->dados[i][1]-1][config->dados[i][2]] == config->dados[i][5])
+                        return 0;
+
+                    //percorre os vizinhos de baixo no mapa para ver se algum tem o mesmo código de cor
+                    for(int j = config->dados[i][0]; j < config->dados[i][2]; j++){
+                        if(mapa->dados[config->dados[i][1]][j] == config->dados[i][5])
+                            return 0;
+                    }
+
+                }
+
+                //a bomba esta encostada no chão e na parede direita
+                else if(config->dados[i][2] == 6){
+
+                    //o vizinho a esquerda da bomba no mapa tem o mesmo código de cor
+                    if(mapa->dados[config->dados[i][1]-1][config->dados[i][0]] == config->dados[i][5])
+                        return 0;
+
+                    //percorre os vizinhos de baixo no mapa para ver se algum tem o mesmo código de cor
+                    for(int j = config->dados[i][0]; j < config->dados[i][2]; j++){
+                        if(mapa->dados[config->dados[i][1]][j] == config->dados[i][5])
+                            return 0;
+                    }
+
+                }
+
+            }
+
         }
 
         //bomba na vertical
