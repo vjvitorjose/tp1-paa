@@ -95,49 +95,88 @@ Matriz* mapeiaConfiguracao(Matriz* config){
 
     Matriz* mapa = alocaMatriz(6, 6);
 
-    int orientacao;
-    //0(horizontal), 1(vertical)
+    for(int i = 0; i < config->li; i++){ //percorre todas as linhas da matriz de configuração
 
-    for(int i = 0; i < config->li; i++){
+        //quando encontrar uma bomba disposta na horizontal:
+        if(config->dados[i][0] != config->dados[i][2]){
 
-        if(config->dados[i][0] != config->dados[i][2])
-            orientacao = 0;
+            //preenche o mapa na linha y0, coluna x0 ate x1
+            for(int j = config->dados[i][0]-1; j < config->dados[i][2]-1; j++){ //for para percorrer de x0 ate x1
 
-        else
-            orientacao = 1;
+                mapa->dados[config->dados[i][1]][j] = config->dados[i][5];
+            
+            }
 
-        if(orientacao == 0){
+        }
 
-            for(int j = config->dados[i][0]-1; j < config->dados[i][2]-1; j++){
-                mapa->dados[config->dados[i][1]][]
+        //se nao estiver na horizontal, a bomba daquela linha está na vertical
+        else{
+
+            //preenche o mapa na coluna x0, da linha y0 ate y1;
+            for(int j = config->dados[i][1]; j < config->dados[i][3]; j++){
+
+                mapa->dados[j][config->dados[i][0]] = config->dados[i][5];
+
             }
 
         }
 
     }
 
+    return mapa;
+
 }
 
 int verificaConfiguracao(Matriz* config){
 
-    int orientacao;
-    //0(horizontal), 1(vertical)
+    //cria um mapa com as cores daquela configuração para facilitar a verificação
+    Matriz* mapa = mapeiaConfiguracao(config);
 
+    //percorre todas as linhas da configuração
     for(int i = 0; i < config->li; i++){
 
-        if(config->dados[i][0] != config->dados[i][2])
-            orientacao = 0;
+        //bomba na horizontal
+        if(config->dados[i][0] != config->dados[i][2]){
 
-        else
-            orientacao = 1;
+            //a bomba esta encostada no teto
+            if(config->dados[i][1] == 1){
 
-        if(orientacao == 0){
+                //a bomba esta encostada no teto e na parede esquerda
+                if(config->dados[i][0] == 1){
 
-            if(config->dados[i][0] != 1){
+                    //o vizinho a direita da bomba no mapa tem o mesmo código de cor
+                    if(mapa->dados[config->dados[i][1]-1][config->dados[i][2]] == config->dados[i][5])
+                        return 0;
 
-                config->
+                    //percorre os vizinhos de baixo no mapa para ver se algum tem o mesmo código de cor
+                    for(int j = config->dados[i][0]; j < config->dados[i][2]; j++){
+                        if(mapa->dados[config->dados[i][1]][j] == config->dados[i][5])
+                            return 0;
+                    }
+
+                }
+
+                //a bomba esta encostada no teto e na parede direita
+                else if(config->dados[i][2] == 6){
+
+                    //o vizinho a esquerda da bomba no mapa tem o mesmo código de cor
+                    if(mapa->dados[config->dados[i][1]-1][config->dados[i][0]] == config->dados[i][5])
+                        return 0;
+
+                    //percorre os vizinhos de baixo no mapa para ver se algum tem o mesmo código de cor
+                    for(int j = config->dados[i][0]; j < config->dados[i][2]; j++){
+                        if(mapa->dados[config->dados[i][1]][j] == config->dados[i][5])
+                            return 0;
+                    }
+
+                }
 
             }
+
+        }
+
+        //bomba na vertical
+        else{
 
         }
 
