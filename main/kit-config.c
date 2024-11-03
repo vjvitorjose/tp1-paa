@@ -25,7 +25,7 @@ void inicializaMatriz(Matriz* matriz){
 
     for(int i = 0; i < matriz->li; i++){
         for(int j = 0; j < matriz->co; j++){
-            matriz->dados[i][j] = 0;
+            matriz->dados[i][j] = -1;
         }
     }
 
@@ -52,6 +52,23 @@ void imprimeMatriz(Matriz* matriz){
 
 }
 
+void adicionarLinha(Matriz *matriz) {
+
+    int **temp = realloc(matriz->dados, (matriz->li+1) * sizeof(int*));
+
+    matriz->dados = temp;
+
+    matriz->dados[matriz->li] = malloc(matriz->co * sizeof(int));
+
+    for(int i = 0; i < matriz->co; i++) {
+        matriz->dados[matriz->li][i] = 0;
+    }
+
+    matriz->li++;
+
+}
+
+
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA VERIFICAÇÂO DA COMPOSIÇÃO
 --------------------------------------------------------------------------------*/
@@ -66,19 +83,23 @@ int verificaComposicao(Matriz* composicao){
 
     for(int i = 0; i < composicao->li; i++){
 
-        somatorio += composicao->dados[i][0];
+            if(composicao->dados[i][0] > 0){
 
-        index = composicao->dados[i][2];
+                somatorio += composicao->dados[i][0];
 
-        if(!flags[index])
-            flags[index] = 1;
+                index = composicao->dados[i][2];
+
+                if(!flags[index])
+                    flags[index] = 1;
+
+            }
 
     }    
 
     if(somatorio > 36)
-        return -1;
+        return 0;
 
-    for(int i = 0; i < 3; i++){
+    for(int i = 0; i < 4; i++){
         if(!flags[i])
             return 0;
     }
@@ -101,29 +122,118 @@ Matriz* mapeiaConfiguracao(Matriz* config){
         if(config->dados[i][0] != config->dados[i][2]){
 
             //preenche o mapa na linha y0, coluna x0 ate x1
-            for(int j = config->dados[i][0]-1; j < config->dados[i][2]-1; j++){ //for para percorrer de x0 ate x1
+            for(int j = config->dados[i][0]-1; j < config->dados[i][2]; j++){ //for para percorrer de x0 ate x1
 
-                mapa->dados[config->dados[i][1]][j] = config->dados[i][5];
+                mapa->dados[config->dados[i][1]-1][j] = config->dados[i][5];
             
             }
 
         }
 
-        //se nao estiver na horizontal, a bomba daquela linha está na vertical
-        else{
+        //a bomba daquela linha está na vertical
+        else if(config->dados[i][1] != config->dados[i][3]){
 
             //preenche o mapa na coluna x0, da linha y0 ate y1;
-            for(int j = config->dados[i][1]; j < config->dados[i][3]; j++){
+            for(int j = config->dados[i][1]-1; j < config->dados[i][3]; j++){
 
-                mapa->dados[j][config->dados[i][0]] = config->dados[i][5];
+                mapa->dados[j][config->dados[i][0]-1] = config->dados[i][5];
 
             }
 
         }
 
+        //a bomba tem 1 de tamanho
+        else{
+            mapa->dados[config->dados[i][1]-1][config->dados[i][0]-1] = config->dados[i][5];
+        }
+
     }
 
     return mapa;
+
+}
+
+int estaNoTeto(int* bomba){
+
+    if(bomba[1] == 1)
+        return 1;
+
+    return 0;
+
+}
+
+int estaNoChao(int* bomba){
+
+    if(bomba[3] == 6)
+        return 1;
+
+    return 0;
+
+}
+
+int estaNaParedeEsquerda(int* bomba){
+
+    if(bomba[0] == 1)
+        return 1;
+
+    return 0;
+
+}
+
+int estaNaParedeDireita(int* bomba){
+
+    if(bomba[2] == 6)
+        return 1;
+
+    return 0;
+
+}
+
+int verificaVizinhosDireita(int* bomba, Matriz* mapa){
+    
+    //percorrendo ele verticalmente
+    for(int i = bomba[1]-1; i < bomba[3]; i++){
+        if(mapa->dados[i][bomba[2]] == bomba[5])
+            return 0;
+    }
+
+    return 1;
+
+}
+
+int verificaVizinhosEsquerda(int* bomba, Matriz* mapa){
+    
+    //percorrendo ele verticalmente
+    for(int i = bomba[1]-1; i < bomba[3]; i++){
+        if(mapa->dados[i][bomba[2]-2] == bomba[5])
+            return 0;
+    }
+
+    return 1;
+
+}
+
+int verificaVizinhosBaixo(int* bomba, Matriz* mapa){
+    
+    //percorrendo ele horizontalmente
+    for(int i = bomba[0]-1; i < bomba[2]; i++){
+        if(mapa->dados[bomba[1]][i] == bomba[5])
+            return 0;
+    }
+
+    return 1;
+
+}
+
+int verificaVizinhosCima(int* bomba, Matriz* mapa){
+    
+    //percorrendo ele horizontalmente
+    for(int i = bomba[0]-1; i < bomba[2]; i++){
+        if(mapa->dados[bomba[1]-2][i] == bomba[5])
+            return 0;
+    }
+
+    return 1;
 
 }
 
@@ -138,72 +248,86 @@ int verificaConfiguracao(Matriz* config){
         //bomba na horizontal
         if(config->dados[i][0] != config->dados[i][2]){
 
-            //a bomba esta encostada no teto
-            if(config->dados[i][1] == 1){
+            if(estaNoTeto(config->dados[i])){
 
-                //a bomba esta encostada no teto e na parede esquerda
-                if(config->dados[i][0] == 1){
+                if(!verificaVizinhosBaixo(config->dados[i], mapa))
+                    return 0;
 
-                    //o vizinho a direita da bomba no mapa tem o mesmo código de cor
-                    if(mapa->dados[config->dados[i][1]-1][config->dados[i][2]] == config->dados[i][5])
+                if(estaNaParedeEsquerda(config->dados[i])){
+
+                    if(!verificaVizinhosDireita(config->dados[i], mapa))
                         return 0;
-
-                    //percorre os vizinhos de baixo no mapa para ver se algum tem o mesmo código de cor
-                    for(int j = config->dados[i][0]; j < config->dados[i][2]; j++){
-                        if(mapa->dados[config->dados[i][1]][j] == config->dados[i][5])
-                            return 0;
-                    }
 
                 }
 
-                //a bomba esta encostada no teto e na parede direita
-                else if(config->dados[i][2] == 6){
+                else if(estaNaParedeDireita(config->dados[i])){
 
-                    //o vizinho a esquerda da bomba no mapa tem o mesmo código de cor
-                    if(mapa->dados[config->dados[i][1]-1][config->dados[i][0]] == config->dados[i][5])
+                    if(!verificaVizinhosEsquerda(config->dados[i], mapa))
                         return 0;
 
-                    //percorre os vizinhos de baixo no mapa para ver se algum tem o mesmo código de cor
-                    for(int j = config->dados[i][0]; j < config->dados[i][2]; j++){
-                        if(mapa->dados[config->dados[i][1]][j] == config->dados[i][5])
-                            return 0;
-                    }
+                }
+
+                else{
+
+                    if(!verificaVizinhosDireita(config->dados[i], mapa) || !verificaVizinhosEsquerda(config->dados[i], mapa))
+                        return 0;
 
                 }
 
             }
 
 
-            //a bomba esta encostada no chão
-            if(config->dados[i][1] == 6){
+            else if(estaNoChao(config->dados[i])){
 
-                //a bomba esta encostada no chão e na parede esquerda
-                if(config->dados[i][0] == 1){
+                if(!verificaVizinhosCima(config->dados[i], mapa))
+                    return 0;
 
-                    //o vizinho a direita da bomba no mapa tem o mesmo código de cor
-                    if(mapa->dados[config->dados[i][1]-1][config->dados[i][2]] == config->dados[i][5])
+                if(estaNaParedeEsquerda(config->dados[i])){
+
+                    if(!verificaVizinhosDireita(config->dados[i], mapa))
                         return 0;
-
-                    //percorre os vizinhos de baixo no mapa para ver se algum tem o mesmo código de cor
-                    for(int j = config->dados[i][0]; j < config->dados[i][2]; j++){
-                        if(mapa->dados[config->dados[i][1]][j] == config->dados[i][5])
-                            return 0;
-                    }
 
                 }
 
-                //a bomba esta encostada no chão e na parede direita
-                else if(config->dados[i][2] == 6){
+                else if(estaNaParedeDireita(config->dados[i])){
 
-                    //o vizinho a esquerda da bomba no mapa tem o mesmo código de cor
-                    if(mapa->dados[config->dados[i][1]-1][config->dados[i][0]] == config->dados[i][5])
+                    if(!verificaVizinhosEsquerda(config->dados[i], mapa))
                         return 0;
 
-                    //percorre os vizinhos de baixo no mapa para ver se algum tem o mesmo código de cor
-                    for(int j = config->dados[i][0]; j < config->dados[i][2]; j++){
-                        if(mapa->dados[config->dados[i][1]][j] == config->dados[i][5])
-                            return 0;
-                    }
+                }
+
+                else{
+
+                    if(!verificaVizinhosEsquerda(config->dados[i], mapa) || !verificaVizinhosDireita(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+            }
+
+            else{
+
+                if(!verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosBaixo(config->dados[i], mapa))
+                    return 0;
+
+                if(estaNaParedeDireita(config->dados[i])){
+
+                    if(!verificaVizinhosEsquerda(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+                else if(estaNaParedeEsquerda(config->dados[i])){
+
+                    if(!verificaVizinhosDireita(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+                else{
+
+                    if(!verificaVizinhosEsquerda(config->dados[i], mapa) || !verificaVizinhosDireita(config->dados[i], mapa))
+                        return 0;
 
                 }
 
@@ -214,9 +338,95 @@ int verificaConfiguracao(Matriz* config){
         //bomba na vertical
         else{
 
+            if(estaNaParedeEsquerda(config->dados[i])){
+
+                if(!verificaVizinhosDireita(config->dados[i], mapa))
+                    return 0;
+
+                if(estaNoTeto(config->dados[i])){
+
+                    if(!verificaVizinhosBaixo(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+                else if(estaNoChao(config->dados[i])){
+
+                    if(!verificaVizinhosCima(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+                else{
+
+                    if(!verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosBaixo(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+            }
+
+            else if(estaNaParedeDireita(config->dados[i])){
+
+                if(!verificaVizinhosEsquerda(config->dados[i], mapa))
+                    return 0;
+
+                if(estaNoTeto(config->dados[i])){
+
+                    if(!verificaVizinhosBaixo(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+                else if(estaNoChao(config->dados[i])){
+
+                    if(!verificaVizinhosCima(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+                else{
+
+                    if(!verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosBaixo(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+            }
+
+            else{
+
+                if(estaNoTeto(config->dados[i])){
+
+                    if(!verificaVizinhosBaixo(config->dados[i], mapa) || !verificaVizinhosEsquerda(config->dados[i], mapa) 
+                            || !verificaVizinhosDireita(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+                else if(estaNoChao(config->dados[i])){
+
+                    if(!verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosEsquerda(config->dados[i], mapa) 
+                            || !verificaVizinhosDireita(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+                else{
+
+                    if(!verificaVizinhosEsquerda(config->dados[i], mapa) || !verificaVizinhosDireita(config->dados[i], mapa) 
+                            || !verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosBaixo(config->dados[i], mapa))
+                        return 0;
+
+                }
+
+            }
+
         }
 
     }
+
+    return 1;
 
 }
 

@@ -4,18 +4,43 @@
 #include "in-out.h"
 #include "kit-config.h"
 
-int main(int argc, char *argv[]){
+int main(int argc, char** argv){
 
-    Matriz* matriz = alocaMatriz(12, 3);
+    int opt;
+    Matriz* composicao;
+    Matriz* configuracao;
 
-    for(int i = 0; i < matriz->li; i++){
-        for(int j = 0; j < matriz->co; j++){
-            matriz->dados[i][j] = j;
+    while((opt = getopt(argc, argv, "a:b:")) != -1){
+
+        switch(opt){
+
+            case 'a':
+
+                composicao = leituraComposicao(optarg);
+
+                if(!verificaComposicao(composicao)){
+                    printf("composicao falha\n");
+                    break;
+                }
+
+                printf("composicao ok\n");
+                break;
+
+            case 'b':
+
+                configuracao = leituraConfiguracao(optarg);
+
+                if(!verificaConfiguracao(configuracao)){
+                    printf("explode\n");
+                    break;
+                }
+
+                printf("configuracao ok\n");
+                break;
+
         }
-    }
 
-    imprimeMatriz(matriz);
-    desalocaMatriz(matriz);
+    }
 
     return 0;
 

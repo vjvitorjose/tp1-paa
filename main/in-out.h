@@ -15,16 +15,11 @@ FILE* abrirArquivo(char* caminho);
 void fecharArquivo(FILE* file);
 
 /*--------------------------------------------------------------------------------
-MÉTODO PRINCIPAL
---------------------------------------------------------------------------------*/
-
-void leituraArquivo(int argc, char** argv, int** comp);
-int getOpt(int argc, char** argv);
-
-/*--------------------------------------------------------------------------------
 MÉTODOS PARA TRATAMENTO DA COMPOSIÇÃO
 --------------------------------------------------------------------------------*/
 
-int** leituraComposicao(char* optarg, int** matriz);
+Matriz* leituraComposicao(char* optarg);
+
+Matriz* leituraConfiguracao(char* optarg);
 
 #endif
