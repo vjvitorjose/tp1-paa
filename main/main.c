@@ -8,7 +8,7 @@ int main(int argc, char** argv){
 
     int opt;
     Matriz* composicao;
-    Configuracao* configuracao;
+    Matriz* configuracao;
 
     while((opt = getopt(argc, argv, "a:b:")) != -1){
 
@@ -29,12 +29,12 @@ int main(int argc, char** argv){
             case 'b':
 
                 configuracao = leituraConfiguracao(optarg);
-                imprimeMatriz(composicao);
+                imprimeMatriz(configuracao);
 
-                // if(!verificaConfiguracao(configuracao, composicao)){
-                //     printf("explode\n");
-                //     break;
-                // }
+                if(!verificaConfiguracao(configuracao, composicao)){
+                    printf("explode\n");
+                    break;
+                }
 
                 printf("configuracao ok\n");
                 break;
