@@ -75,7 +75,7 @@ Configuracao* leituraConfiguracao(char* optarg){
 
     Configuracao* configuracao = criaConfiguracao();
 
-    int cor;
+    int cor, index;
 
     char buffer[13];
 
@@ -85,6 +85,8 @@ Configuracao* leituraConfiguracao(char* optarg){
 
         if(buffer[0] == '\n'){
             acrescentarMatriz(configuracao);
+            fgets(buffer, sizeof(buffer), file);
+            continue;
         }
 
         cor = (int)buffer[9] + (int)buffer[10];
@@ -106,13 +108,14 @@ Configuracao* leituraConfiguracao(char* optarg){
         }
 
         for(int i = 0; i < 5; i++){
-            configuracao->dados[configuracao->li-1][i] = buffer[i*2] - '0';
+            index = configuracao->qtd-1;
+            configuracao->matriz[index].dados[configuracao->matriz[index].li-1][i] = buffer[i*2] - '0';
         }
 
-        configuracao->dados[configuracao->li-1][5] = cor;
+        configuracao->matriz[index].dados[configuracao->matriz[index].li-1][5] = cor;
 
         if(fgets(buffer, sizeof(buffer), file))
-            adicionarLinha(configuracao);
+            adicionarLinha(&configuracao->matriz[index]);
 
         else 
             break;
