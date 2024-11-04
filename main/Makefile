@@ -1,4 +1,6 @@
-all: main.o kit-config.o in-out.o
+all: teste run
+
+teste: main.o kit-config.o in-out.o
 	gcc main.o kit-config.o in-out.o -o teste
 
 main.o: main.c 
@@ -11,4 +13,7 @@ in-out.o: in-out.c
 	gcc -c in-out.c 
 
 clean:
-	rm *.o
+	rm -f *.o teste
+
+run: teste
+	./teste -a Composicao.txt -b Configuracoes.txt
