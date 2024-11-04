@@ -63,45 +63,71 @@ Matriz* leituraComposicao(char* optarg){
 
 }
 
-Matriz* leituraConfiguracao(char* optarg){
+Configuracao* leituraConfiguracao(char* optarg){
 
     FILE* file = abrirArquivo(optarg);
 
-    Matriz* configuracao = alocaMatriz(1, 6);
+    Configuracao* configuracao = criaConfiguracao();
 
-    char corStr[3];
-    int x0, y0, x1, y1, tam, corInt;
+    Matriz* mapa = criaMapa();
 
-    fscanf(file, "%d %d %d %d %d %2s", &x0, &y0, &x1, &y1, &tam, corStr);
+    int cor;
+
+    int x0, y0, x1, y1, tam;
+
+    char buffer[13];
+
+    fgets(buffer, sizeof(buffer), file);
 
     while(1){
 
-        printf("%d %d %d %d %d %s\n", x0, y0, x1, y1, tam, corStr);
+        while(1){
 
-        if(strcmp(corStr, "Am") == 0){
-            corInt = 0;
-        } 
-        else if(strcmp(corStr, "Az") == 0){
-            corInt = 1;
-        } 
-        else if(strcmp(corStr, "Vd") == 0){
-            corInt = 2;
-        } 
-        else if(strcmp(corStr, "Vm") == 0){
-            corInt = 3;
+            if(buffer[0] == '\n')
+                break;
+
+            cor = (int)buffer[9] + (int)buffer[10];
+            //Am(174), Az(187), Vd(186), Vm(195)
+
+            switch(cor){
+                case 174:
+                    cor = 0;
+                    break;
+                case 187:
+                    cor = 1;
+                    break;
+                case 186:
+                    cor = 2;
+                    break;
+                case 195:
+                    cor = 3;
+                    break;
+            }
+
+            if(!adicionaBomba(mapa, buffer[0]-'0', buffer[2]-'0', buffer[4]-'0', buffer[6]-'0', cor)){
+                printf("Bombas sobrepostas\n");
+                return NULL;
+            }
+
+            for(int i = 0; i < 5; i++){
+                configuracao->matriz[configuracao->qtd-1].dados[configuracao->matriz[configuracao->qtd-1].li-1][i] = buffer[i*2] - '0';
+            }
+
+            configuracao->matriz[configuracao->qtd-1].dados[configuracao->matriz[configuracao->qtd-1].li-1][5] = cor;
+
+            if(fgets(buffer, sizeof(buffer), file) && buffer[0] != '\n')
+                adicionarLinha(&configuracao->matriz[configuracao->qtd-1]);
+
+            else 
+                break;
+
         }
 
-        configuracao->dados[configuracao->li - 1][0] = x0;
-        configuracao->dados[configuracao->li - 1][1] = y0;
-        configuracao->dados[configuracao->li - 1][2] = x1;
-        configuracao->dados[configuracao->li - 1][3] = y1;
-        configuracao->dados[configuracao->li - 1][4] = tam;
-        configuracao->dados[configuracao->li - 1][5] = corInt;
-
-        if((fscanf(file, "%d %d %d %d %d %2s", &x0, &y0, &x1, &y1, &tam, corStr) != 6))
+        if(feof(file))
             break;
-        
-        adicionarLinha(configuracao);
+
+        acrescentarMatriz(configuracao);
+        fgets(buffer, sizeof(buffer), file);
 
     }
 

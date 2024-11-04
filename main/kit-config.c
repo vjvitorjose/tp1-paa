@@ -105,13 +105,21 @@ void desalocaConfiguracao(Configuracao* config){
 
 void acrescentarMatriz(Configuracao* config) {
 
-    Matriz* novo_matrizes = realloc(config->matriz, (config->qtd+1) * sizeof(Matriz));
+    config->matriz = realloc(config->matriz, (config->qtd+1) * sizeof(Matriz));
 
-    config->matriz = novo_matrizes;
+    Matriz* aux = alocaMatriz(1, 6); 
+    
+    config->matriz[config->qtd].li = aux->li;
+    config->matriz[config->qtd].co = aux->co;
+    config->matriz[config->qtd].dados = malloc(aux->li * sizeof(int*));
+    for (int i = 0; i < aux->li; i++) {
+        config->matriz[config->qtd].dados[i] = malloc(aux->co * sizeof(int));
+        for (int j = 0; j < aux->co; j++) {
+            config->matriz[config->qtd].dados[i][j] = aux->dados[i][j];
+        }
+    }
 
-    Matriz* temp = alocaMatriz(1, 6);
-    config->matriz[config->qtd] = *temp;
-    desalocaMatriz(temp);
+    desalocaMatriz(aux);
 
     config->qtd++;
 
@@ -145,7 +153,7 @@ int verificaComposicao(Matriz* composicao){
 
     }    
 
-    if(somatorio > 36)
+    if(somatorio != 36)
         return 0;
 
     for(int i = 0; i < 4; i++){
@@ -163,7 +171,7 @@ MÉTODOS PARA VERIFICAÇÂO DA CONFIGURAÇÃO
 
 Matriz* mapeiaConfiguracao(Matriz* config){
 
-    Matriz* mapa = alocaMatriz(6, 6);
+    Matriz* mapa = criaMapa();
 
     for(int i = 0; i < config->li; i++){ //percorre todas as linhas da matriz de configuração
 
@@ -199,6 +207,33 @@ Matriz* mapeiaConfiguracao(Matriz* config){
     }
 
     return mapa;
+
+}
+
+Matriz* criaMapa(){
+
+    Matriz* mapa = alocaMatriz(6, 6);
+
+    return mapa;
+
+}
+
+int adicionaBomba(Matriz* mapa, int x0, int y0, int x1, int y1, int cor){
+
+    for(int i = x0-1; i < x1; i++){
+        for(int j = y0-1; j < y1; j++){
+            if(mapa->dados[i][j] != -1)
+                return 0;
+        }
+    }
+
+    for(int i = x0-1; i < x1; i++){
+        for(int j = y0-1; j < y1; j++){
+            mapa->dados[i][j] = cor;
+        }
+    }
+
+    return 1;
 
 }
 
@@ -296,189 +331,195 @@ int verificaVizinhosCima(int* bomba, Matriz* mapa){
 
 }
 
-int verificaConfiguracao(Matriz* config, Matriz* comp){
+int verificaConfiguracao(Configuracao* config, Matriz* comp){
 
-    if(!emparelhadoCompConfig(comp, config))
-        return 0;
+    for(int k = 0; k < config->qtd; k++){
 
-    //cria um mapa com as cores daquela configuração para facilitar a verificação
-    Matriz* mapa = mapeiaConfiguracao(config);
+        printf("%d\n", k);
 
-    //percorre todas as linhas da configuração
-    for(int i = 0; i < config->li; i++){
+        if(!emparelhadoCompConfig(comp, &config->matriz[k]))
+            return 0;
 
-        //bomba na horizontal
-        if(config->dados[i][0] != config->dados[i][2]){
+        //cria um mapa com as cores daquela configuração para facilitar a verificação
+        Matriz* mapa = mapeiaConfiguracao(&config->matriz[k]);
 
-            if(estaNoTeto(config->dados[i])){
+        //percorre todas as linhas da configuração
+        for(int i = 0; i < config->matriz[k].li; i++){
 
-                if(!verificaVizinhosBaixo(config->dados[i], mapa))
-                    return 0;
+            //bomba na horizontal
+            if(config->matriz[k].dados[i][0] != config->matriz[k].dados[i][2]){
 
-                if(estaNaParedeEsquerda(config->dados[i])){
+                if(estaNoTeto(config->matriz[k].dados[i])){
 
-                    if(!verificaVizinhosDireita(config->dados[i], mapa))
+                    if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
                         return 0;
+
+                    if(estaNaParedeEsquerda(config->matriz[k].dados[i])){
+
+                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
+
+                    else if(estaNaParedeDireita(config->matriz[k].dados[i])){
+
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
+
+                    else{
+
+                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa) || !verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
 
                 }
 
-                else if(estaNaParedeDireita(config->dados[i])){
 
-                    if(!verificaVizinhosEsquerda(config->dados[i], mapa))
+                else if(estaNoChao(config->matriz[k].dados[i])){
+
+                    if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa))
                         return 0;
+
+                    if(estaNaParedeEsquerda(config->matriz[k].dados[i])){
+
+                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
+
+                    else if(estaNaParedeDireita(config->matriz[k].dados[i])){
+
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
+
+                    else{
+
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
 
                 }
 
                 else{
 
-                    if(!verificaVizinhosDireita(config->dados[i], mapa) || !verificaVizinhosEsquerda(config->dados[i], mapa))
+                    if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
                         return 0;
+
+                    if(estaNaParedeDireita(config->matriz[k].dados[i])){
+
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
+
+                    else if(estaNaParedeEsquerda(config->matriz[k].dados[i])){
+
+                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
+
+                    else{
+
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
 
                 }
 
             }
 
-
-            else if(estaNoChao(config->dados[i])){
-
-                if(!verificaVizinhosCima(config->dados[i], mapa))
-                    return 0;
-
-                if(estaNaParedeEsquerda(config->dados[i])){
-
-                    if(!verificaVizinhosDireita(config->dados[i], mapa))
-                        return 0;
-
-                }
-
-                else if(estaNaParedeDireita(config->dados[i])){
-
-                    if(!verificaVizinhosEsquerda(config->dados[i], mapa))
-                        return 0;
-
-                }
-
-                else{
-
-                    if(!verificaVizinhosEsquerda(config->dados[i], mapa) || !verificaVizinhosDireita(config->dados[i], mapa))
-                        return 0;
-
-                }
-
-            }
-
+            //bomba na vertical
             else{
 
-                if(!verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosBaixo(config->dados[i], mapa))
-                    return 0;
+                if(estaNaParedeEsquerda(config->matriz[k].dados[i])){
 
-                if(estaNaParedeDireita(config->dados[i])){
-
-                    if(!verificaVizinhosEsquerda(config->dados[i], mapa))
+                    if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
                         return 0;
+
+                    if(estaNoTeto(config->matriz[k].dados[i])){
+
+                        if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
+
+                    else if(estaNoChao(config->matriz[k].dados[i])){
+
+                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
+
+                    else{
+
+                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
+                            return 0;
+
+                    }
 
                 }
 
-                else if(estaNaParedeEsquerda(config->dados[i])){
+                else if(estaNaParedeDireita(config->matriz[k].dados[i])){
 
-                    if(!verificaVizinhosDireita(config->dados[i], mapa))
+                    if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
                         return 0;
 
-                }
+                    if(estaNoTeto(config->matriz[k].dados[i])){
 
-                else{
+                        if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
+                            return 0;
 
-                    if(!verificaVizinhosEsquerda(config->dados[i], mapa) || !verificaVizinhosDireita(config->dados[i], mapa))
-                        return 0;
+                    }
 
-                }
+                    else if(estaNoChao(config->matriz[k].dados[i])){
 
-            }
+                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa))
+                            return 0;
 
-        }
+                    }
 
-        //bomba na vertical
-        else{
+                    else{
 
-            if(estaNaParedeEsquerda(config->dados[i])){
+                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
+                            return 0;
 
-                if(!verificaVizinhosDireita(config->dados[i], mapa))
-                    return 0;
-
-                if(estaNoTeto(config->dados[i])){
-
-                    if(!verificaVizinhosBaixo(config->dados[i], mapa))
-                        return 0;
-
-                }
-
-                else if(estaNoChao(config->dados[i])){
-
-                    if(!verificaVizinhosCima(config->dados[i], mapa))
-                        return 0;
-
-                }
-
-                else{
-
-                    if(!verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosBaixo(config->dados[i], mapa))
-                        return 0;
-
-                }
-
-            }
-
-            else if(estaNaParedeDireita(config->dados[i])){
-
-                if(!verificaVizinhosEsquerda(config->dados[i], mapa))
-                    return 0;
-
-                if(estaNoTeto(config->dados[i])){
-
-                    if(!verificaVizinhosBaixo(config->dados[i], mapa))
-                        return 0;
-
-                }
-
-                else if(estaNoChao(config->dados[i])){
-
-                    if(!verificaVizinhosCima(config->dados[i], mapa))
-                        return 0;
+                    }
 
                 }
 
                 else{
 
-                    if(!verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosBaixo(config->dados[i], mapa))
-                        return 0;
+                    if(estaNoTeto(config->matriz[k].dados[i])){
 
-                }
+                        if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa) || !verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) 
+                                || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
+                            return 0;
 
-            }
+                    }
 
-            else{
+                    else if(estaNoChao(config->matriz[k].dados[i])){
 
-                if(estaNoTeto(config->dados[i])){
+                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) 
+                                || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
+                            return 0;
 
-                    if(!verificaVizinhosBaixo(config->dados[i], mapa) || !verificaVizinhosEsquerda(config->dados[i], mapa) 
-                            || !verificaVizinhosDireita(config->dados[i], mapa))
-                        return 0;
+                    }
 
-                }
+                    else{
 
-                else if(estaNoChao(config->dados[i])){
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa) 
+                                || !verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
+                            return 0;
 
-                    if(!verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosEsquerda(config->dados[i], mapa) 
-                            || !verificaVizinhosDireita(config->dados[i], mapa))
-                        return 0;
-
-                }
-
-                else{
-
-                    if(!verificaVizinhosEsquerda(config->dados[i], mapa) || !verificaVizinhosDireita(config->dados[i], mapa) 
-                            || !verificaVizinhosCima(config->dados[i], mapa) || !verificaVizinhosBaixo(config->dados[i], mapa))
-                        return 0;
+                    }
 
                 }
 

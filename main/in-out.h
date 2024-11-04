@@ -21,6 +21,6 @@ MÉTODOS PARA TRATAMENTO DA COMPOSIÇÃO
 
 Matriz* leituraComposicao(char* optarg);
 
-Matriz* leituraConfiguracao(char* optarg);
+Configuracao* leituraConfiguracao(char* optarg);
 
 #endif
