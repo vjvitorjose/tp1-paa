@@ -68,6 +68,55 @@ void adicionarLinha(Matriz *matriz) {
 
 }
 
+Matriz* copiaMatriz(Matriz* origem){
+
+    Matriz* copia = alocaMatriz(origem->li, origem->co);
+
+    for(int i = 0; i < copia->li; i++){
+        for(int j = 0; j < copia->co; j++){
+            copia->dados[i][j] = origem->dados[i][j];
+        }
+    }
+
+    return copia;
+
+}
+
+Configuracao* criaConfiguracao(){
+
+    Configuracao* config = malloc(sizeof(Configuracao));
+
+    config->matriz = alocaMatriz(1, 6);
+    config->qtd = 1;
+
+    return config;
+
+}
+
+void desalocaConfiguracao(Configuracao* config){
+
+    for(int i = 0; i < config->qtd; i++){
+        desalocaMatriz(&(config->matriz[i]));
+    }
+
+    free(config->matriz);
+
+}
+
+void acrescentarMatriz(Configuracao* config) {
+
+    Matriz* novo_matrizes = (Matriz*)realloc(config->matriz, (config->qtd+1) * sizeof(Matriz));
+
+    config->matriz = novo_matrizes;
+
+    Matriz* temp = alocaMatriz(1, 6);
+    config->matriz[config->qtd] = *temp;
+    desalocaMatriz(temp);
+
+    config->qtd++;
+
+}
+
 
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA VERIFICAÇÂO DA COMPOSIÇÃO
@@ -201,12 +250,22 @@ int verificaVizinhosDireita(int* bomba, Matriz* mapa){
 
 }
 
+void imprimeBomba(int* bomba, int i){
+
+    for(int j = 0; j < i; j++){
+        printf("%d ", bomba[j]);
+    }
+    printf("\n");
+
+}
+
 int verificaVizinhosEsquerda(int* bomba, Matriz* mapa){
     
     //percorrendo ele verticalmente
     for(int i = bomba[1]-1; i < bomba[3]; i++){
-        if(mapa->dados[i][bomba[2]-2] == bomba[5])
+        if(mapa->dados[i][bomba[0]-2] == bomba[5]){
             return 0;
+        }
     }
 
     return 1;
@@ -217,7 +276,7 @@ int verificaVizinhosBaixo(int* bomba, Matriz* mapa){
     
     //percorrendo ele horizontalmente
     for(int i = bomba[0]-1; i < bomba[2]; i++){
-        if(mapa->dados[bomba[1]][i] == bomba[5])
+        if(mapa->dados[bomba[3]][i] == bomba[5])
             return 0;
     }
 
@@ -237,7 +296,10 @@ int verificaVizinhosCima(int* bomba, Matriz* mapa){
 
 }
 
-int verificaConfiguracao(Matriz* config){
+int verificaConfiguracao(Matriz* config, Matriz* comp){
+
+    if(!emparelhadoCompConfig(comp, config))
+        return 0;
 
     //cria um mapa com as cores daquela configuração para facilitar a verificação
     Matriz* mapa = mapeiaConfiguracao(config);
@@ -433,17 +495,24 @@ int verificaConfiguracao(Matriz* config){
 int emparelhadoCompConfig(Matriz* comp, Matriz* config){
 
     int index;
-    Matriz copiaComp = *comp;
+    Matriz* copiaComp = copiaMatriz(comp);
 
     for(int i = 0; i < config->li; i++){
 
         index = (config->dados[i][5] * 3) + (config->dados[i][4] % 3);
-        copiaComp.dados[index][0]--;
+        copiaComp->dados[index][0] = 0;
 
     }
 
-    for(int i = 0; i < copiaComp.li; i++){
-        if(copiaComp.dados[i][0] != 0)
+    for(int i = 0; i < config->li; i++){
+
+        index = (config->dados[i][5] * 3) + (config->dados[i][4] % 3);
+        copiaComp->dados[index][0]++;
+
+    }
+
+    for(int i = 0; i < copiaComp->li; i++){
+        if(copiaComp->dados[i][0] != comp->dados[i][0])
             return 0;
     }
 

@@ -69,19 +69,23 @@ Matriz* leituraComposicao(char* optarg){
 
 }
 
-Matriz* leituraConfiguracao(char* optarg){
+Configuracao* leituraConfiguracao(char* optarg){
 
     FILE* file = abrirArquivo(optarg);
 
-    Matriz* configuracao = alocaMatriz(1, 6);
+    Configuracao* configuracao = criaConfiguracao();
 
-    int cor, i = 0;
+    int cor;
 
     char buffer[13];
 
     fgets(buffer, sizeof(buffer), file);
 
     while(1){
+
+        if(buffer[0] == '\n'){
+            acrescentarMatriz(configuracao);
+        }
 
         cor = (int)buffer[9] + (int)buffer[10];
         //Am(174), Az(187), Vd(186), Vm(195)

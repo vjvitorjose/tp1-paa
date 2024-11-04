@@ -12,6 +12,13 @@ typedef struct Matriz{
 
 }Matriz;
 
+typedef struct Configuracao{
+
+    Matriz* matriz;
+    int qtd;
+
+}Configuracao;
+
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA TRATAMENTO DE MATRIZES
 --------------------------------------------------------------------------------*/
@@ -21,6 +28,11 @@ void inicializaMatriz(Matriz* matriz);
 void desalocaMatriz(Matriz* matriz);
 void imprimeMatriz(Matriz* matriz);
 void adicionarLinha(Matriz *matriz);
+
+Configuracao* criaConfiguracao();
+void desalocaConfiguracao(Configuracao* config);
+void acrescentarMatriz(Configuracao* config);
+void imprimeBomba(int* bomba, int i);
 
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA VERIFICAÇÂO DA COMPOSIÇÃO
@@ -48,13 +60,14 @@ int verificaVizinhosEsquerda(int* bomba, Matriz* mapa);
 int verificaVizinhosBaixo(int* bomba, Matriz* mapa);
 int verificaVizinhosCima(int* bomba, Matriz* mapa);
 
-int verificaConfiguracao(Matriz* config);
+int verificaConfiguracao(Matriz* config, Matriz* comp);
 
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA VERIFICAÇÂO DA SIMETRIA ENTRE COMPOSIÇÃO E CONFIGURAÇÃO
 --------------------------------------------------------------------------------*/
 
 int emparelhadoCompConfig(Matriz* comp, Matriz* config);
+Matriz* copiaMatriz(Matriz* origem);
 
 
 #endif
