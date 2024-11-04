@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <unistd.h>
-
 #include "in-out.h"
 #include "kit-config.h"
 
@@ -17,6 +14,11 @@ int main(int argc, char** argv){
             case 'a':
 
                 composicao = leituraComposicao(optarg);
+
+                if(composicao == NULL){
+                    perror("Erro ao alocar a composição");
+                    return 0;
+                }
 
                 if(!verificaComposicao(composicao)){
                     printf("composicao falha\n");

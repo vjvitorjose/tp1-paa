@@ -8,6 +8,11 @@ Matriz* alocaMatriz(int linhas, int colunas){
 
     Matriz* matriz = malloc(sizeof(Matriz));
 
+    if(matriz == NULL){
+        perror("Erro ao alocar matriz");
+        return NULL;
+    }
+
     matriz->li = linhas;
     matriz->co = colunas;
 
@@ -86,9 +91,18 @@ Configuracao* criaConfiguracao(){
 
     Configuracao* config = malloc(sizeof(Configuracao));
 
-    config->matriz = alocaMatriz(1, 6);
-    config->qtd = 1;
+    if(config == NULL){
+        perror("Erro ao alocar memória para configuração");
+        return NULL;
+    }
 
+    config->matriz = alocaMatriz(1, 6);
+
+    if(config->matriz == NULL){
+        perror("Erro ao alocar memória para matriz da primeira configuração");
+    }
+
+    config->qtd = 1;
     return config;
 
 }
@@ -154,7 +168,7 @@ int verificaComposicao(Matriz* composicao){
     }    
 
     if(somatorio != 36)
-        return 0;
+        return -1;
 
     for(int i = 0; i < 4; i++){
         if(!flags[i])
@@ -214,6 +228,9 @@ Matriz* criaMapa(){
 
     Matriz* mapa = alocaMatriz(6, 6);
 
+    if(mapa == NULL)
+        perror("Erro ao criar mapa");
+
     return mapa;
 
 }
@@ -222,14 +239,14 @@ int adicionaBomba(Matriz* mapa, int x0, int y0, int x1, int y1, int cor){
 
     for(int i = x0-1; i < x1; i++){
         for(int j = y0-1; j < y1; j++){
-            if(mapa->dados[i][j] != -1)
+            if(mapa->dados[j][i] != -1)
                 return 0;
         }
     }
 
     for(int i = x0-1; i < x1; i++){
         for(int j = y0-1; j < y1; j++){
-            mapa->dados[i][j] = cor;
+            mapa->dados[j][i] = cor;
         }
     }
 
@@ -334,8 +351,6 @@ int verificaVizinhosCima(int* bomba, Matriz* mapa){
 int verificaConfiguracao(Configuracao* config, Matriz* comp){
 
     for(int k = 0; k < config->qtd; k++){
-
-        printf("%d\n", k);
 
         if(!emparelhadoCompConfig(comp, &config->matriz[k]))
             return 0;

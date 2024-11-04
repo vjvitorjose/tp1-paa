@@ -16,7 +16,12 @@ FILE* abrirArquivo(char* caminho){
 }
 
 void fecharArquivo(FILE* file){
+
+    if(file == NULL)
+        perror("Erro ao fechar o arquivo");
+
     fclose(file);
+
 }
 
 /*--------------------------------------------------------------------------------
@@ -27,25 +32,33 @@ Matriz* leituraComposicao(char* optarg){
 
     FILE* file = abrirArquivo(optarg);
 
+    if(file == NULL){
+        perror("Erro ao abrir Composicao.txt");
+        return NULL;
+    }
+
     Matriz* matriz = alocaMatriz(12, 3);
 
-    char buffer[8];
+    if(matriz == NULL){
+        perror("Erro ao alocar matriz para composição");
+        return NULL;
+    }
 
     int index, qtd, tam, corInt;
     char corStr[3];
 
-    while(fscanf(file, "%d %d %2s", &qtd, &tam, corStr) == 3){
+    while(fscanf(file, "%d %d%2s", &qtd, &tam, corStr) == 3){
 
-        if(strcmp(corStr, "Am") == 0){
+        if(!strcmp(corStr, "Am")){
             corInt = 0;
         } 
-        else if(strcmp(corStr, "Az") == 0){
+        else if(!strcmp(corStr, "Az")){
             corInt = 1;
         } 
-        else if(strcmp(corStr, "Vd") == 0){
+        else if(!strcmp(corStr, "Vd")){
             corInt = 2;
         } 
-        else if(strcmp(corStr, "Vm") == 0){
+        else if(!strcmp(corStr, "Vm")){
             corInt = 3;
         }
 
@@ -57,8 +70,9 @@ Matriz* leituraComposicao(char* optarg){
 
     }
 
-    fecharArquivo(file);
+    printf("Matriz de composição criada com sucesso.\n");
 
+    fecharArquivo(file);
     return matriz;
 
 }
@@ -67,17 +81,31 @@ Configuracao* leituraConfiguracao(char* optarg){
 
     FILE* file = abrirArquivo(optarg);
 
+    if(file == NULL){
+        perror("Erro ao abrir Configuracoes.txt");
+        return NULL;
+    }
+
     Configuracao* configuracao = criaConfiguracao();
+
+    if(configuracao == NULL){
+        perror("Erro ao criar struct Composicao");
+        return NULL;
+    }
 
     Matriz* mapa = criaMapa();
 
-    int cor;
+    if(mapa == NULL){
+        perror("Erro ao criar mapa");
+        return NULL;
+    }
 
-    int x0, y0, x1, y1, tam;
-
+    int cor, x0, y0, x1, y1, tam;
     char buffer[13];
 
-    fgets(buffer, sizeof(buffer), file);
+    if(!fgets(buffer, sizeof(buffer), file)){
+        perror("Erro ao ler a configuração");
+    }
 
     while(1){
 
@@ -105,7 +133,8 @@ Configuracao* leituraConfiguracao(char* optarg){
             }
 
             if(!adicionaBomba(mapa, buffer[0]-'0', buffer[2]-'0', buffer[4]-'0', buffer[6]-'0', cor)){
-                printf("Bombas sobrepostas\n");
+                // desalocaConfiguracao(configuracao);
+                printf("bomba sobreposta\n");
                 return NULL;
             }
 
@@ -126,6 +155,7 @@ Configuracao* leituraConfiguracao(char* optarg){
         if(feof(file))
             break;
 
+        inicializaMatriz(mapa);
         acrescentarMatriz(configuracao);
         fgets(buffer, sizeof(buffer), file);
 
