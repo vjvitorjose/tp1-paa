@@ -76,6 +76,8 @@ Matriz* leituraConfiguracao(char* optarg){
 
     while(1){
 
+        printf("%d %d %d %d %d %s\n", x0, y0, x1, y1, tam, corStr);
+
         if(strcmp(corStr, "Am") == 0){
             corInt = 0;
         } 

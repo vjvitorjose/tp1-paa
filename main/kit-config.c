@@ -105,7 +105,7 @@ void desalocaConfiguracao(Configuracao* config){
 
 void acrescentarMatriz(Configuracao* config) {
 
-    Matriz* novo_matrizes = (Matriz*)realloc(config->matriz, (config->qtd+1) * sizeof(Matriz));
+    Matriz* novo_matrizes = realloc(config->matriz, (config->qtd+1) * sizeof(Matriz));
 
     config->matriz = novo_matrizes;
 
