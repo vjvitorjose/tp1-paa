@@ -446,51 +446,75 @@ int verificaConfiguracao(Configuracao* config){
             //bomba na horizontal
             if(config->matriz[k].dados[i][0] != config->matriz[k].dados[i][2]){
                 if(estaNoTeto(config->matriz[k].dados[i])){
-                    if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
-                        return 1;
+                    if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa)){
+                        printf("Configuração %d está inválida\n", k+1);
+                        break;
+                        }
                     if(estaNaParedeEsquerda(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else if(estaNaParedeDireita(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else{
-                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa) || !verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa) || !verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                 }
                 else if(estaNoChao(config->matriz[k].dados[i])){
-                    if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa))
-                        return 1;
+                    if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa)){
+                        printf("Configuração %d está inválida\n", k+1);
+                        break;
+                        }
                     if(estaNaParedeEsquerda(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else if(estaNaParedeDireita(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else{
-                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                 }
                 else{
-                    if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
-                        return 1;
+                    if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa)){
+                        printf("Configuração %d está inválida\n", k+1);
+                        break;
+                        }
                     if(estaNaParedeDireita(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else if(estaNaParedeEsquerda(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else{
-                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                 }
             }
@@ -498,52 +522,74 @@ int verificaConfiguracao(Configuracao* config){
             //bomba na vertical
             else{
                 if(estaNaParedeEsquerda(config->matriz[k].dados[i])){
-                    if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
-                        return 1;
+                    if(!verificaVizinhosDireita(config->matriz[k].dados[i], mapa)){
+                        printf("Configuração %d está inválida\n", k+1);
+                        break;
+                        }
                     if(estaNoTeto(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else if(estaNoChao(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else{
-                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                 }
                 else if(estaNaParedeDireita(config->matriz[k].dados[i])){
-                    if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa))
-                        return 1;
+                    if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa)){
+                        printf("Configuração %d está inválida\n", k+1);
+                        break;
+                        }
                     if(estaNoTeto(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else if(estaNoChao(config->matriz[k].dados[i])){
-                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else{
-                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
-                            return 1;
+                        if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                 }
                 else{
                     if(estaNoTeto(config->matriz[k].dados[i])){
                         if(!verificaVizinhosBaixo(config->matriz[k].dados[i], mapa) || !verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) 
-                                || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
-                            return 1;
+                                || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else if(estaNoChao(config->matriz[k].dados[i])){
                         if(!verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) 
-                                || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa))
-                            return 1;
+                                || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                     else{
                         if(!verificaVizinhosEsquerda(config->matriz[k].dados[i], mapa) || !verificaVizinhosDireita(config->matriz[k].dados[i], mapa) 
-                                || !verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa))
-                            return 1;
+                                || !verificaVizinhosCima(config->matriz[k].dados[i], mapa) || !verificaVizinhosBaixo(config->matriz[k].dados[i], mapa)){
+                            printf("Configuração %d está inválida\n", k+1);
+                            break;
+                            }
                     }
                 }
             }
