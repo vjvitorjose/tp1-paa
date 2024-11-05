@@ -110,7 +110,11 @@ Configuracao* leituraConfiguracao(char* optarg){
 
     while(1){
 
+        printf("fora\n");
+
         while(1){
+
+            printf("dentro\n");
 
             if(buffer[0] == '\n')
                 break;
@@ -134,12 +138,10 @@ Configuracao* leituraConfiguracao(char* optarg){
             }
 
             if(!adicionaBomba(mapa, buffer[0]-'0', buffer[2]-'0', buffer[4]-'0', buffer[6]-'0', cor)){
-
-                fecharArquivo(file);
-                // desalocaConfiguracao(configuracao);
-                desalocaMatriz(mapa);
-                return NULL;
-
+                printf("Configuração %d inválida.\n", configuracao->qtd);
+                desalocaMatriz(&configuracao->matriz[configuracao->qtd-1]);
+                configuracao->qtd--;
+                break;
             }
 
             for(int j = 0; j < 5; j++){
