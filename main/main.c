@@ -56,12 +56,7 @@ int main(int argc, char** argv){
                     break;
                 }
 
-                if(!verificaConfiguracao(configuracao)){
-                    printf("Configurações Ok.\n");
-                    break;
-                }
-
-                printf("Configuração %d inválida.\n", configuracao->qtd);
+                verificaConfiguracao(configuracao);
                 break;
 
             default:

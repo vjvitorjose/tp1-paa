@@ -312,10 +312,8 @@ int adicionaBomba(Matriz* mapa, int x0, int y0, int x1, int y1, int cor){
 
     for(int i = x0-1; i < x1; i++){
         for(int j = y0-1; j < y1; j++){
-            if(mapa->dados[j][i] != -1){
-                printf("ERRO: Bombas sobrepostas em (%d, %d).\n", i+1, j+1);
+            if(mapa->dados[j][i] != -1)
                 return 0;
-            }
         }
     }
 

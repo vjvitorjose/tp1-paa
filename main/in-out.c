@@ -135,7 +135,6 @@ Configuracao* leituraConfiguracao(char* optarg){
 
             if(!adicionaBomba(mapa, buffer[0]-'0', buffer[2]-'0', buffer[4]-'0', buffer[6]-'0', cor)){
 
-                printf("ERRO: Configuração %d: Erro ao adicionar bomba: %s", i, buffer);
                 fecharArquivo(file);
                 // desalocaConfiguracao(configuracao);
                 desalocaMatriz(mapa);
