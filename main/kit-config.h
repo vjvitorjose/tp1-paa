@@ -64,7 +64,7 @@ int verificaVizinhosEsquerda(int* bomba, Matriz* mapa);
 int verificaVizinhosBaixo(int* bomba, Matriz* mapa);
 int verificaVizinhosCima(int* bomba, Matriz* mapa);
 
-int verificaConfiguracao(Configuracao* config);
+int verificaConfiguracao(Configuracao* config, Matriz* comp);
 
 int adicionaBomba(Matriz* mapa, int x0, int y0, int x1, int y1, int cor);
 Matriz* criaMapa();

@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv){
 
-    int opt, resultado;
+    int opt;
     Matriz* composicao;
     Configuracao* configuracao;
 
@@ -20,32 +20,7 @@ int main(int argc, char** argv){
                     return 0;
                 }
 
-                resultado = verificaComposicao(composicao);
-
-                if(resultado == -2){
-                    printf("Composição falha: Essa composição não cabe no kit.\n");
-                    break;
-                }
-
-                else if(resultado == -1){
-                    printf("Composição falha: O kit possui espaços vazios.\n");
-                    break;
-                }
-
-                else if(resultado == 1){
-                    printf("Composição falha: O kit não possui todas as cores.");
-                    break;
-                }
-
-                else if(!resultado){
-                    printf("Composição Ok.\n");
-                    continue;
-                }
-
-                else{
-                    printf("Resultado inesperado, execução interrompida.\n");
-                    return 0;
-                }
+                verificaComposicao(composicao);
 
             case 'b':
 
@@ -56,7 +31,7 @@ int main(int argc, char** argv){
                     break;
                 }
 
-                verificaConfiguracao(configuracao);
+                verificaConfiguracao(configuracao, composicao);
                 break;
 
             default:

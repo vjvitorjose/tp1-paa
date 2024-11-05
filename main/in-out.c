@@ -17,9 +17,6 @@ FILE* abrirArquivo(char* caminho){
 
 void fecharArquivo(FILE* file){
 
-    if(file == NULL)
-        perror("Erro ao fechar o arquivo");
-
     fclose(file);
 
 }
@@ -33,14 +30,12 @@ Matriz* leituraComposicao(char* optarg){
     FILE* file = abrirArquivo(optarg);
 
     if(file == NULL){
-        perror("Erro ao abrir Composicao.txt");
         return NULL;
     }
 
     Matriz* matriz = alocaMatriz(12, 3);
 
     if(matriz == NULL){
-        perror("Erro ao alocar matriz para composição");
         return NULL;
     }
 
@@ -110,11 +105,7 @@ Configuracao* leituraConfiguracao(char* optarg){
 
     while(1){
 
-        printf("fora\n");
-
         while(1){
-
-            printf("dentro\n");
 
             if(buffer[0] == '\n')
                 break;
