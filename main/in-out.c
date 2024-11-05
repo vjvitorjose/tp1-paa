@@ -70,8 +70,6 @@ Matriz* leituraComposicao(char* optarg){
 
     }
 
-    printf("Matriz de composição criada com sucesso.\n");
-
     fecharArquivo(file);
     return matriz;
 
@@ -90,6 +88,7 @@ Configuracao* leituraConfiguracao(char* optarg){
 
     if(configuracao == NULL){
         perror("Erro ao criar struct Composicao");
+        fecharArquivo(file);
         return NULL;
     }
 
@@ -97,10 +96,12 @@ Configuracao* leituraConfiguracao(char* optarg){
 
     if(mapa == NULL){
         perror("Erro ao criar mapa");
+        fecharArquivo(file);
+        // desalocaConfiguracao(configuracao);
         return NULL;
     }
 
-    int cor, x0, y0, x1, y1, tam;
+    int cor, x0, y0, x1, y1, tam, i = 1;
     char buffer[13];
 
     if(!fgets(buffer, sizeof(buffer), file)){
@@ -133,13 +134,17 @@ Configuracao* leituraConfiguracao(char* optarg){
             }
 
             if(!adicionaBomba(mapa, buffer[0]-'0', buffer[2]-'0', buffer[4]-'0', buffer[6]-'0', cor)){
+
+                printf("ERRO: Configuração %d: Erro ao adicionar bomba: %s", i, buffer);
+                fecharArquivo(file);
                 // desalocaConfiguracao(configuracao);
-                printf("bomba sobreposta\n");
+                desalocaMatriz(mapa);
                 return NULL;
+
             }
 
-            for(int i = 0; i < 5; i++){
-                configuracao->matriz[configuracao->qtd-1].dados[configuracao->matriz[configuracao->qtd-1].li-1][i] = buffer[i*2] - '0';
+            for(int j = 0; j < 5; j++){
+                configuracao->matriz[configuracao->qtd-1].dados[configuracao->matriz[configuracao->qtd-1].li-1][j] = buffer[j*2] - '0';
             }
 
             configuracao->matriz[configuracao->qtd-1].dados[configuracao->matriz[configuracao->qtd-1].li-1][5] = cor;
@@ -155,6 +160,7 @@ Configuracao* leituraConfiguracao(char* optarg){
         if(feof(file))
             break;
 
+        i++;
         inicializaMatriz(mapa);
         acrescentarMatriz(configuracao);
         fgets(buffer, sizeof(buffer), file);
@@ -162,6 +168,7 @@ Configuracao* leituraConfiguracao(char* optarg){
     }
 
     fecharArquivo(file);
+    desalocaMatriz(mapa);
 
     return configuracao;
 

@@ -28,15 +28,15 @@ MÉTODOS PARA TRATAMENTO DE MATRIZES
 --------------------------------------------------------------------------------*/
 
 Matriz* alocaMatriz(int linhas, int colunas);
-void inicializaMatriz(Matriz* matriz);
-void desalocaMatriz(Matriz* matriz);
+int inicializaMatriz(Matriz* matriz);
+int desalocaMatriz(Matriz* matriz);
 void imprimeMatriz(Matriz* matriz);
-void adicionarLinha(Matriz *matriz);
+int adicionarLinha(Matriz *matriz);
 
 Configuracao* criaConfiguracao();
 void desalocaConfiguracao(Configuracao* config);
 void acrescentarMatriz(Configuracao* config);
-void imprimeBomba(int* bomba, int i);
+void imprimeBomba(int* bomba);
 
 /*--------------------------------------------------------------------------------
 MÉTODOS PARA VERIFICAÇÂO DA COMPOSIÇÃO
@@ -64,7 +64,7 @@ int verificaVizinhosEsquerda(int* bomba, Matriz* mapa);
 int verificaVizinhosBaixo(int* bomba, Matriz* mapa);
 int verificaVizinhosCima(int* bomba, Matriz* mapa);
 
-int verificaConfiguracao(Configuracao* config, Matriz* comp);
+int verificaConfiguracao(Configuracao* config);
 
 int adicionaBomba(Matriz* mapa, int x0, int y0, int x1, int y1, int cor);
 Matriz* criaMapa();

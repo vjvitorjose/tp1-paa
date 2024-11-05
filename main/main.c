@@ -3,7 +3,7 @@
 
 int main(int argc, char** argv){
 
-    int opt;
+    int opt, resultado;
     Matriz* composicao;
     Configuracao* configuracao;
 
@@ -20,25 +20,54 @@ int main(int argc, char** argv){
                     return 0;
                 }
 
-                if(!verificaComposicao(composicao)){
-                    printf("composicao falha\n");
+                resultado = verificaComposicao(composicao);
+
+                if(resultado == -2){
+                    printf("Composição falha: Essa composição não cabe no kit.\n");
                     break;
                 }
 
-                printf("composicao ok\n");
-                break;
+                else if(resultado == -1){
+                    printf("Composição falha: O kit possui espaços vazios.\n");
+                    break;
+                }
+
+                else if(resultado == 1){
+                    printf("Composição falha: O kit não possui todas as cores.");
+                    break;
+                }
+
+                else if(!resultado){
+                    printf("Composição Ok.\n");
+                    continue;
+                }
+
+                else{
+                    printf("Resultado inesperado, execução interrompida.\n");
+                    return 0;
+                }
 
             case 'b':
 
                 configuracao = leituraConfiguracao(optarg);
 
-                if(!verificaConfiguracao(configuracao, composicao)){
-                    printf("explode\n");
+                if(configuracao == NULL){
+                    perror("Erro ao alocar configuração");
                     break;
                 }
 
-                printf("configuracao ok\n");
+                if(!verificaConfiguracao(configuracao)){
+                    printf("Configurações Ok.\n");
+                    break;
+                }
+
+                printf("Configuração %d inválida.\n", configuracao->qtd);
                 break;
+
+            default:
+
+                printf("Opção inválida.\n");
+                return 0;
 
         }
 
